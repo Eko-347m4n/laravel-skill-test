@@ -1,6 +1,6 @@
 # Laravel Skill Test - Takeya Consulting
 
-RESTful API for Post model with support for drafts, scheduling, and authentication, built with Laravel 11.
+RESTful API for Post model with support for drafts, scheduling, and authentication, built with Laravel 12.
 
 ## Setup Instructions
 

@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Post extends Model
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory;
 
     /**
@@ -25,10 +25,28 @@ class Post extends Model
     ];
 
     /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'is_draft' => 'boolean',
+        'published_at' => 'datetime',
+    ];
+
+    /**
      * Get the user that owns the post.
      */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Scope a query to only include active posts.
+     */
+    public function scopeActive(Builder $query): void
+    {
+        $query->where('is_draft', false)->where('published_at', '<=', now());
     }
 }

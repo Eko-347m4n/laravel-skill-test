@@ -11,26 +11,22 @@ class UpdatePostRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        // Memastikan pengguna yang terotentikasi adalah pemilik post yang akan di-update.
-        // $this->route('post') akan mengambil model Post dari route model binding.
-        return $this->user()->id === $this->route('post')->user_id;
+        // Otorisasi ditangani oleh PostPolicy yang dipanggil dari controller.
+        return true;
     }
 
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array|string>
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
-        // Menggunakan 'sometimes' memastikan bahwa aturan hanya diterapkan
-        // jika field tersebut ada dalam request. Ini ideal untuk request PATCH/PUT.
         return [
-            'title' => ['sometimes', 'required', 'string', 'max:255'],
-            'body' => ['sometimes', 'required', 'string'],
-            'is_draft' => ['sometimes', 'required', 'boolean'],
-            // 'published_at' tetap wajib jika post tidak dalam status draft.
-            'published_at' => ['nullable', 'date', 'required_if:is_draft,false'],
+            'title' => ['sometimes', 'string', 'max:255'],
+            'body' => ['sometimes', 'string'],
+            'is_draft' => ['sometimes', 'boolean'],
+            'published_at' => ['nullable', 'date'],
         ];
     }
 }

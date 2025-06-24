@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StorePostRequest extends FormRequest
 {
@@ -11,23 +12,26 @@ class StorePostRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        // Memastikan hanya user yang terotentikasi yang bisa membuat post.
-        return auth()->check();
+        // Otorisasi ditangani oleh middleware 'auth:sanctum' pada rute.
+        return true;
     }
 
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array|string>
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
         return [
             'title' => ['required', 'string', 'max:255'],
-            // Menggunakan 'body' sesuai dengan kolom di database Anda.
             'body' => ['required', 'string'],
             'is_draft' => ['required', 'boolean'],
-            'published_at' => ['nullable', 'date', 'required_if:is_draft,false'],
+            'published_at' => [
+                Rule::requiredIf(! $this->boolean('is_draft')),
+                'nullable',
+                'date',
+            ],
         ];
     }
 }

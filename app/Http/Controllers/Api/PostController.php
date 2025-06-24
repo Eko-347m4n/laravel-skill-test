@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePostRequest;
+use App\Http\Requests\UpdatePostRequest;
 use App\Models\Post;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Carbon;
@@ -63,6 +64,22 @@ class PostController extends Controller
         // Eager load the user relationship to include it in the response.
         $post->load('user');
 
+        return response()->json($post);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(UpdatePostRequest $request, Post $post): JsonResponse
+    {
+        // Otorisasi dan validasi sudah ditangani oleh UpdatePostRequest.
+        // Jika gagal, Laravel akan otomatis mengembalikan response 403 (Forbidden) atau 422 (Unprocessable).
+        $post->update($request->validated());
+
+        // Muat kembali relasi user untuk memastikan data ter-update ada di response.
+        $post->load('user');
+
+        // Kembalikan post yang sudah di-update.
         return response()->json($post);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StorePostRequest;
 use App\Models\Post;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Carbon;
@@ -31,5 +32,21 @@ class PostController extends Controller
         return response()->json([
             'message' => 'This endpoint can be used to provide data for a post creation form.',
         ]);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(StorePostRequest $request): JsonResponse
+    {
+        // Request sudah divalidasi dan diotorisasi oleh StorePostRequest.
+        // `user()` diambil dari user yang sedang login (terotentikasi).
+        $post = $request->user()->posts()->create($request->validated());
+
+        // Muat relasi user agar datanya ikut tampil di response.
+        $post->load('user');
+
+        // Kembalikan post yang baru dibuat dengan status 201 Created.
+        return response()->json($post, 201);
     }
 }

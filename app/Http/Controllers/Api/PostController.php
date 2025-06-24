@@ -49,4 +49,20 @@ class PostController extends Controller
         // Kembalikan post yang baru dibuat dengan status 201 Created.
         return response()->json($post, 201);
     }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(Post $post): JsonResponse
+    {
+        // Return 404 if the post is a draft or scheduled for the future.
+        if ($post->is_draft || ! $post->published_at || now()->lt($post->published_at)) {
+            abort(404);
+        }
+
+        // Eager load the user relationship to include it in the response.
+        $post->load('user');
+
+        return response()->json($post);
+    }
 }

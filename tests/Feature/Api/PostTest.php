@@ -5,6 +5,7 @@ namespace Tests\Feature\Api;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class PostTest extends TestCase
@@ -181,7 +182,8 @@ class PostTest extends TestCase
             'published_at' => now()->toDateTimeString(),
         ];
 
-        $this->actingAs($user)->postJson('/api/posts', $postData)
+        Sanctum::actingAs($user);
+        $this->postJson('/api/posts', $postData)
             ->assertStatus(201)
             ->assertJsonPath('data.title', 'My First Post')
             ->assertJsonPath('data.user.id', $user->id);
@@ -207,14 +209,16 @@ class PostTest extends TestCase
             'title' => 'Scheduled Post',
             'body' => 'Scheduled body',
             'is_draft' => false,
-            'published_at' => now()->addDay()->toDateTimeString(),
+            'published_at' => now()->addDay()->toIso8601String(),
         ];
 
-        $this->actingAs($user)->postJson('/api/posts', $draftPostData)
+        Sanctum::actingAs($user);
+        $this->postJson('/api/posts', $draftPostData)
             ->assertStatus(201)
             ->assertJsonPath('data.is_draft', true);
 
-        $this->actingAs($user)->postJson('/api/posts', $scheduledPostData)
+        Sanctum::actingAs($user);
+        $this->postJson('/api/posts', $scheduledPostData)
             ->assertStatus(201)
             ->assertJsonPath('data.published_at', $scheduledPostData['published_at']);
     }
@@ -226,8 +230,8 @@ class PostTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $this->actingAs($user)
-            ->postJson('/api/posts', $invalidData)
+        Sanctum::actingAs($user);
+        $this->postJson('/api/posts', $invalidData)
             ->assertStatus(422)
             ->assertJsonValidationErrors($expectedErrorKeys);
     }
@@ -242,7 +246,8 @@ class PostTest extends TestCase
         $post = Post::factory()->for($author)->create();
         $updateData = ['title' => 'Updated Title'];
 
-        $this->actingAs($author)->putJson("/api/posts/{$post->id}", $updateData)
+        Sanctum::actingAs($author);
+        $this->putJson("/api/posts/{$post->id}", $updateData)
             ->assertOk()
             ->assertJsonPath('data.title', 'Updated Title');
 
@@ -268,11 +273,13 @@ class PostTest extends TestCase
 
         $updateData = ['title' => 'Updated Title'];
 
-        $this->actingAs($author)->putJson("/api/posts/{$draftPost->id}", $updateData)
+        Sanctum::actingAs($author);
+        $this->putJson("/api/posts/{$draftPost->id}", $updateData)
             ->assertOk()
             ->assertJsonPath('data.title', 'Updated Title');
 
-        $this->actingAs($author)->putJson("/api/posts/{$scheduledPost->id}", $updateData)
+        Sanctum::actingAs($author);
+        $this->putJson("/api/posts/{$scheduledPost->id}", $updateData)
             ->assertOk()
             ->assertJsonPath('data.title', 'Updated Title');
     }
@@ -283,7 +290,8 @@ class PostTest extends TestCase
         $post = Post::factory()->for($author)->create();
         $nonAuthor = User::factory()->create();
 
-        $this->actingAs($nonAuthor)->putJson("/api/posts/{$post->id}", ['title' => '...'])
+        Sanctum::actingAs($nonAuthor);
+        $this->putJson("/api/posts/{$post->id}", ['title' => '...'])
             ->assertForbidden();
     }
 
@@ -301,8 +309,8 @@ class PostTest extends TestCase
         $author = User::factory()->create();
         $post = Post::factory()->for($author)->create();
 
-        $this->actingAs($author)
-            ->putJson("/api/posts/{$post->id}", $invalidData)
+        Sanctum::actingAs($author);
+        $this->putJson("/api/posts/{$post->id}", $invalidData)
             ->assertStatus(422)
             ->assertJsonValidationErrors($expectedErrorKeys);
     }

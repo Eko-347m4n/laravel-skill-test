@@ -7,10 +7,13 @@ use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
 use App\Http\Resources\PostResource;
 use App\Models\Post;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Response;
 
 class PostController extends Controller
 {
+    use AuthorizesRequests;
+
     /**
      * Menampilkan daftar post yang aktif.
      */

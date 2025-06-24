@@ -26,7 +26,17 @@ class UpdatePostRequest extends FormRequest
             'title' => ['sometimes', 'string', 'max:255'],
             'body' => ['sometimes', 'string'],
             'is_draft' => ['sometimes', 'boolean'],
-            'published_at' => ['nullable', 'date'],
+            'published_at' => [
+                'nullable',
+                'date',
+                \Illuminate\Validation\Rule::requiredIf(function () {
+                    // Require published_at if is_draft is being set to false
+                    $isDraft = $this->boolean('is_draft');
+
+                    // If is_draft is present and false, require published_at
+                    return $this->has('is_draft') && $isDraft === false;
+                }),
+            ],
         ];
     }
 }

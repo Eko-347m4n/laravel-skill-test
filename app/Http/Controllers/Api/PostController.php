@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\DestroyPostRequest;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
 use App\Models\Post;
@@ -81,5 +82,17 @@ class PostController extends Controller
 
         // Kembalikan post yang sudah di-update.
         return response()->json($post);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(DestroyPostRequest $request, Post $post): JsonResponse
+    {
+        // Otorisasi sudah ditangani oleh DestroyPostRequest.
+        // Jika gagal, Laravel akan otomatis mengembalikan response 403 (Forbidden).
+        $post->delete();
+
+        return response()->json(null, 204); // 204 No Content - Indikasi sukses tanpa mengembalikan konten.
     }
 }

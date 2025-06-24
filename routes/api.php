@@ -16,3 +16,6 @@ Route::post('/posts', [PostController::class, 'store'])->middleware('auth:sanctu
 Route::get('/posts/{post}', [PostController::class, 'show']);
 
 Route::put('/posts/{post}', [PostController::class, 'update'])->middleware('auth:sanctum');
+Route::delete('/posts/{post}', [PostController::class, 'destroy'])->middleware('auth:sanctum');
+
+Route::put('/posts/{post}', [PostController::class, 'update'])->middleware('auth:sanctum');

@@ -20,6 +20,15 @@ class PostController extends Controller
             ->latest('published_at')
             ->paginate(20);
 
-        return response()->json($posts);
+        $postsArray = $posts->toArray();
+
+        $meta = $postsArray;
+        unset($meta['data'], $meta['links']);
+
+        return response()->json([
+            'data' => $postsArray['data'],
+            'links' => $postsArray['links'],
+            'meta' => $meta,
+        ]);
     }
 }

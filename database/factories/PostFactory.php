@@ -17,10 +17,11 @@ class PostFactory extends Factory
     public function definition(): array
     {
         return [
-            'title' => fake()->sentence(),
-            'content' => fake()->realText(),
-            'is_draft' => false,
-            'published_at' => now(),
+            'title' => $this->faker->sentence(),
+            'body' => $this->faker->paragraph(), // Pastikan ini ada untuk menghasilkan konten body
+            'is_draft' => $this->faker->boolean(),
+            'published_at' => $this->faker->dateTimeBetween('-1 year', '+1 year'),
+            'user_id' => \App\Models\User::factory(),
         ];
     }
 }

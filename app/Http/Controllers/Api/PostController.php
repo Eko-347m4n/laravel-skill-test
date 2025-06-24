@@ -20,15 +20,16 @@ class PostController extends Controller
             ->latest('published_at')
             ->paginate(20);
 
-        $postsArray = $posts->toArray();
+        // Laravel can automatically format a Paginator instance into the correct JSON structure.
+        return response()->json($posts);
+    }
 
-        $meta = $postsArray;
-        unset($meta['data'], $meta['links']);
-
+    public function create()
+    {
+        // For an API, it's better to return JSON.
+        // This endpoint could provide metadata needed for a frontend form.
         return response()->json([
-            'data' => $postsArray['data'],
-            'links' => $postsArray['links'],
-            'meta' => $meta,
+            'message' => 'This endpoint can be used to provide data for a post creation form.',
         ]);
     }
 }
